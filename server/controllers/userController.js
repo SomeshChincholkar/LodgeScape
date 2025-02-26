@@ -1,5 +1,5 @@
 import User from "../models/user.js"
-import Listing from "../models/Listing.js"
+import Listing from "../models/listing.js"
 
 // Register user
 export const register = async (req, res) => {
