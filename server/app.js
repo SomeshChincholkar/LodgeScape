@@ -8,7 +8,13 @@ import userRouter from "./routes/user.js"
 const app = express();
 
 dotenv.config()
-app.use(cors());
+const corsOptions = {
+  origin: "https://lodgescape-frontend-client.onrender.com", //  Allow only your frontend
+  credentials: true, //  Allow authentication headers & cookies
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 const MONGO_URL = process.env.ATLASDB_URL
