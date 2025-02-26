@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { X, Plus } from "lucide-react";           // Import icons
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function EditListing() {
   const [listing, setListing] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -28,7 +30,7 @@ export default function EditListing() {
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const response = await fetch(`/api/listings/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/listings/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -51,7 +53,7 @@ export default function EditListing() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch(`/api/listings/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/listings/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

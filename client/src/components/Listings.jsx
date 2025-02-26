@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Heart, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function Listings({ searchQuery, isAuthenticated }) {
   const [listings, setListings] = useState([]);
   const [wishlist, setWishlist] = useState(new Set());
@@ -13,7 +15,7 @@ export default function Listings({ searchQuery, isAuthenticated }) {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch(`/api/listings${searchQuery ? `?search=${searchQuery}` : ""}`);
+        const response = await fetch(`${API_BASE_URL}/api/listings${searchQuery ? `?search=${searchQuery}` : ""}`);
         const data = await response.json();
         setListings(data);
 
@@ -39,7 +41,7 @@ export default function Listings({ searchQuery, isAuthenticated }) {
    useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch(`/api/listings${searchQuery ? `?search=${searchQuery}` : ""}`);
+        const response = await fetch(`${API_BASE_URL}/api/listings${searchQuery ? `?search=${searchQuery}` : ""}`);
         const data = await response.json();
         setListings(data);
       } catch (error) {
@@ -56,7 +58,7 @@ export default function Listings({ searchQuery, isAuthenticated }) {
     if (isAuthenticated) {
       const fetchWishlist = async () => {
         try {
-          const response = await fetch("/api/users/wishlist", {
+          const response = await fetch(`${API_BASE_URL}/api/users/wishlist`, {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
           });
           const data = await response.json();
@@ -80,7 +82,7 @@ export default function Listings({ searchQuery, isAuthenticated }) {
     }
   
     try {
-      const response = await fetch(`/api/users/wishlist`, {
+      const response = await fetch(`${API_BASE_URL}/api/users/wishlist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

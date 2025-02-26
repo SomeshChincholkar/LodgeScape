@@ -10,6 +10,8 @@ import Login from "./components/Login"
 import Register from "./components/Register"
 import AccountPage from "./components/account/AccountPage"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function App() {
   const [searchQuery, setSearchQuery] = useState("")
   const [suggestions, setSuggestions] = useState([])
@@ -28,7 +30,7 @@ function App() {
     const fetchSuggestions = async () => {
       if (searchQuery.length > 0) {
         try {
-          const response = await fetch(`/api/listings/suggestions?search=${searchQuery}`)
+          const response = await fetch(`${API_BASE_URL}/api/listings/suggestions?search=${searchQuery}`)
           const data = await response.json()
           setSuggestions(data)
         } catch (error) {

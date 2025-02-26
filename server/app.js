@@ -9,8 +9,8 @@ const app = express();
 
 dotenv.config()
 const corsOptions = {
-  origin: "https://lodgescape-frontend-client.onrender.com", //  Allow only your frontend
-  credentials: true, //  Allow authentication headers & cookies
+  origin: process.env.FRONTEND_URL, // Load from .env
+  credentials: true, // Allow authentication headers & cookies
 };
 
 app.use(cors(corsOptions));

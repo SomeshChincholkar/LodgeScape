@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { Pencil, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function MyListings({ user }) {
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -9,7 +11,7 @@ export default function MyListings({ user }) {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch("/api/users/listings", {
+        const response = await fetch(`${API_BASE_URL}/api/users/listings`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -32,7 +34,7 @@ export default function MyListings({ user }) {
   const handleDelete = async (listingId) => {
     if (window.confirm("Are you sure you want to delete this listing?")) {
       try {
-        const response = await fetch(`/api/listings/${listingId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/listings/${listingId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

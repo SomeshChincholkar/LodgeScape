@@ -2,6 +2,8 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Plus, X } from "lucide-react"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;        // i.e. backend URL
+
 export default function AddListing() {
   const navigate = useNavigate()
   const token = localStorage.getItem("token") // Ensure the token exists
@@ -34,7 +36,7 @@ export default function AddListing() {
     e.preventDefault()
     try {
 
-      const response = await fetch("/api/listings", {
+      const response = await fetch(`${API_BASE_URL}/api/listings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

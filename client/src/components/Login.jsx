@@ -2,6 +2,8 @@ import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { X } from "lucide-react"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function Login({ setIsAuthenticated }) { // Accept setIsAuthenticated as prop
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
@@ -13,7 +15,7 @@ export default function Login({ setIsAuthenticated }) { // Accept setIsAuthentic
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch("/api/users/login", {
+      const response = await fetch(`${API_BASE_URL}/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

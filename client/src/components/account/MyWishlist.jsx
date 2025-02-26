@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { Heart } from "lucide-react"
 import { Link } from "react-router-dom"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function MyWishlist({ user }) {
   const [wishlist, setWishlist] = useState([])
   const [loading, setLoading] = useState(true)
@@ -9,7 +11,7 @@ export default function MyWishlist({ user }) {
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        const response = await fetch("/api/users/account/wishlist", {
+        const response = await fetch(`${API_BASE_URL}/api/users/account/wishlist`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -32,7 +34,7 @@ export default function MyWishlist({ user }) {
 
   const handleWishlistToggle = async (listingId) => {
     try {
-      const response = await fetch("/api/users/wishlist", {
+      const response = await fetch(`${API_BASE_URL}/api/users/wishlist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

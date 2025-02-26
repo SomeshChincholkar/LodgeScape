@@ -1,7 +1,7 @@
-"use client"
-
 import { useState } from "react"
 import { Edit2, Save } from "lucide-react"
+
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function PersonalInfo({ user, setUser }) {
   const [isEditing, setIsEditing] = useState(false)
@@ -18,7 +18,7 @@ export default function PersonalInfo({ user, setUser }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch("/api/users/update", {
+      const response = await fetch(`${API_BASE_URL}/api/users/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
 import { Share, Heart, ArrowLeft } from "lucide-react"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export default function ViewListing() {
   const [listing, setListing] = useState(null)
   const [showAllPhotos, setShowAllPhotos] = useState(false)
@@ -10,7 +12,7 @@ export default function ViewListing() {
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const response = await fetch(`/api/listings/${id}`)
+        const response = await fetch(`${API_BASE_URL}/api/listings/${id}`)
         const data = await response.json()
         setListing(data)
       } catch (error) {
