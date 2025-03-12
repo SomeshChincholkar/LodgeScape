@@ -11,10 +11,12 @@ export default function Listings({ searchQuery, isAuthenticated }) {
   const [hoveredImage, setHoveredImage] = useState(null);
   const [visibleListings, setVisibleListings] = useState([]);
   const [listingRatings, setListingRatings] = useState({});
+  const [isLoading, setIsLoading] = useState(true); // New loading state
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchListings = async () => {
+      setIsLoading(true); // Set loading to true when fetch starts
       try {
         const response = await fetch(`${API_BASE_URL}/api/listings${searchQuery ? `?search=${searchQuery}` : ""}`);
         const data = await response.json();
@@ -33,6 +35,8 @@ export default function Listings({ searchQuery, isAuthenticated }) {
         });
       } catch (error) {
         console.error("Error fetching listings:", error);
+      } finally {
+        setIsLoading(false); // Set loading to false regardless of success or error
       }
     };
 
@@ -131,102 +135,131 @@ export default function Listings({ searchQuery, isAuthenticated }) {
     }));
   };
 
+  // Loading skeleton component for a single listing card
+  const ListingSkeleton = () => (
+    <div className="group transition-all duration-300 ease-in-out">
+      <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-gray-200 animate-pulse"></div>
+      <div className="mt-3">
+        <div className="flex justify-between items-start">
+          <div className="h-5 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+          <div className="h-5 bg-gray-200 rounded w-10 animate-pulse"></div>
+        </div>
+        <div className="mt-1">
+          <div className="h-5 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Generate array of skeleton loaders
+  const renderSkeletons = () => {
+    return Array(6).fill(0).map((_, index) => (
+      <ListingSkeleton key={`skeleton-${index}`} />
+    ));
+  };
+
   return (
     <div className="max-w-[2520px] mx-auto px-8 sm:px-10 lg:px-20 pt-28 pb-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-        {visibleListings.map((listing) => {
-          const currentImageIndex = currentImageIndexes[listing._id] || 0;
-          const isWishlisted = wishlist.has(listing._id);
-          const isFirstImage = currentImageIndex === 0;
-          const isLastImage = currentImageIndex === listing.images?.length - 1;
-          const averageRating = listingRatings[listing._id] || "0.0";
+        {isLoading ? (
+          // Show skeleton loaders while loading
+          renderSkeletons()
+        ) : (
+          // Show actual listings when loaded
+          visibleListings.map((listing) => {
+            const currentImageIndex = currentImageIndexes[listing._id] || 0;
+            const isWishlisted = wishlist.has(listing._id);
+            const isFirstImage = currentImageIndex === 0;
+            const isLastImage = currentImageIndex === listing.images?.length - 1;
+            const averageRating = listingRatings[listing._id] || "0.0";
 
-          return (
-            <Link
-              key={listing._id}
-              to={`/listings/${listing._id}`}
-              className="group cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              {/* Image Container */}
-              <div
-                className="relative aspect-[16/9] overflow-hidden rounded-xl"
-                onMouseEnter={() => setHoveredImage(listing._id)}
-                onMouseLeave={() => setHoveredImage(null)}
+            return (
+              <Link
+                key={listing._id}
+                to={`/listings/${listing._id}`}
+                className="group cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105"
               >
-                <div className="absolute right-3 top-3 z-10">
-                  <button
-                    className="hover:scale-110 transition"
-                    onClick={(e) => handleWishlist(e, listing._id)}
-                  >
-                    <Heart
-                      className={`h-6 w-6 drop-shadow-md ${
-                        isWishlisted ? "fill-red-500 stroke-red-500" : "fill-white stroke-white"
-                      }`}
-                    />
-                  </button>
-                </div>
+                {/* Image Container */}
+                <div
+                  className="relative aspect-[16/9] overflow-hidden rounded-xl"
+                  onMouseEnter={() => setHoveredImage(listing._id)}
+                  onMouseLeave={() => setHoveredImage(null)}
+                >
+                  <div className="absolute right-3 top-3 z-10">
+                    <button
+                      className="hover:scale-110 transition"
+                      onClick={(e) => handleWishlist(e, listing._id)}
+                    >
+                      <Heart
+                        className={`h-6 w-6 drop-shadow-md ${
+                          isWishlisted ? "fill-red-500 stroke-red-500" : "fill-white stroke-white"
+                        }`}
+                      />
+                    </button>
+                  </div>
 
-                {/* Navigation Arrows */}
-                {listing.images && listing.images.length > 1 && (
-                  <>
-                    {!isFirstImage && (
-                      <button
-                        onClick={(e) => showPrevImage(e, listing._id)}
-                        className="absolute left-2 top-[45%] z-10 rounded-full bg-white/70 p-1 hover:bg-white transition transform hover:scale-110"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </button>
-                    )}
-                    {!isLastImage && hoveredImage === listing._id && (
-                      <button
-                        onClick={(e) => showNextImage(e, listing._id, listing.images.length)}
-                        className="absolute right-2 top-[45%] z-10 rounded-full bg-white/70 p-1 hover:bg-white transition transform hover:scale-110"
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </button>
-                    )}
-                  </>
-                )}
+                  {/* Navigation Arrows */}
+                  {listing.images && listing.images.length > 1 && (
+                    <>
+                      {!isFirstImage && (
+                        <button
+                          onClick={(e) => showPrevImage(e, listing._id)}
+                          className="absolute left-2 top-[45%] z-10 rounded-full bg-white/70 p-1 hover:bg-white transition transform hover:scale-110"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                      )}
+                      {!isLastImage && hoveredImage === listing._id && (
+                        <button
+                          onClick={(e) => showNextImage(e, listing._id, listing.images.length)}
+                          className="absolute right-2 top-[45%] z-10 rounded-full bg-white/70 p-1 hover:bg-white transition transform hover:scale-110"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      )}
+                    </>
+                  )}
 
-                {/* Images */}
-                <div className="relative w-full h-full overflow-hidden">
-                  <div
-                    className="flex transition-transform duration-300 ease-in-out h-full"
-                    style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
-                  >
-                    {listing.images &&
-                      listing.images.map((image, index) => (
-                        <div key={index} className="w-full h-full flex-shrink-0">
-                          <img
-                            src={image || "/placeholder.svg"}
-                            alt={`${listing.title} - Image ${index + 1}`}
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                      ))}
+                  {/* Images */}
+                  <div className="relative w-full h-full overflow-hidden">
+                    <div
+                      className="flex transition-transform duration-300 ease-in-out h-full"
+                      style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+                    >
+                      {listing.images &&
+                        listing.images.map((image, index) => (
+                          <div key={index} className="w-full h-full flex-shrink-0">
+                            <img
+                              src={image || "/placeholder.svg"}
+                              alt={`${listing.title} - Image ${index + 1}`}
+                              className="object-cover w-full h-full"
+                            />
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Listing Details */}
-              <div className="mt-3">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-base font-medium truncate">
-                    {listing.location}, {listing.country}
-                  </h3>
-                  <div className="flex items-center gap-1">
-                    <Star className={`h-4 w-4 ${Number(averageRating) > 0 ? "fill-current text-yellow-500" : "fill-gray-300"}`} />
-                    <span className="font-medium">{averageRating}</span>
+                {/* Listing Details */}
+                <div className="mt-3">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-base font-medium truncate">
+                      {listing.location}, {listing.country}
+                    </h3>
+                    <div className="flex items-center gap-1">
+                      <Star className={`h-4 w-4 ${Number(averageRating) > 0 ? "fill-current text-yellow-500" : "fill-gray-300"}`} />
+                      <span className="font-medium">{averageRating}</span>
+                    </div>
+                  </div>
+                  <div className="mt-1">
+                    <span className="font-medium">₹{listing.price}</span>
+                    <span className="text-gray-500"> night</span>
                   </div>
                 </div>
-                <div className="mt-1">
-                  <span className="font-medium">₹{listing.price}</span>
-                  <span className="text-gray-500"> night</span>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })
+        )}
       </div>
     </div>
   );
