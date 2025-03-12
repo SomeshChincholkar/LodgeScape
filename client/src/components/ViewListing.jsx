@@ -252,10 +252,6 @@ export default function ViewListing() {
     return <div className="pt-28 px-8">Loading...</div>
   }
 
-  if (error) {
-    return <div className="pt-28 px-8 text-red-500">Error: {error}</div>
-  }
-
   if (!listing) {
     return <div className="pt-28 px-8">Listing not found</div>
   }
