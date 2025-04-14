@@ -3,6 +3,8 @@ import User from "../models/user.js"
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
+console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
+
 // Google login/signup handler
 export const googleAuth = async (req, res) => {
   try {
