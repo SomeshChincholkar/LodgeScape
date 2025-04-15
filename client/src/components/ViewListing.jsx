@@ -303,23 +303,26 @@ export default function ViewListing() {
 
   // Handle Share
   const handleShare = async () => {
-    const url = window.location.href
+    // Create a clean URL with just the essential parts
+    const baseUrl = window.location.origin
+    const cleanPath = `/listings/${id}`
+    const shareUrl = `${baseUrl}${cleanPath}`
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: listing.title,
-          text: `Check out this listing: ${listing.title}`,
-          url: url,
+          title: listing?.title || "Check out this listing",
+          text: `Check out this listing: ${listing?.title || ""}`,
+          url: shareUrl,
         })
       } catch (error) {
         console.error("Error sharing:", error)
         // Fallback to clipboard
-        copyToClipboard(url)
+        copyToClipboard(shareUrl)
       }
     } else {
       // Fallback for browsers that don't support navigator.share
-      copyToClipboard(url)
+      copyToClipboard(shareUrl)
     }
   }
 
